@@ -1,0 +1,13 @@
+# Local-only skills: internal/admin details, or laptop-only infrastructure
+symsys/
+psych251/
+sherlock/
+train-on-ccn2/
+
+# Local-only details split out of published skills
+**/private.md
+
+# Cruft
+.DS_Store
+.Rhistory
+*.zip
