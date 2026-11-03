@@ -134,9 +134,25 @@ For any format change that would re-flow prose or alter wording (e.g.,
 shortening the abstract to a word limit, splitting paragraphs to match
 journal layout): do NOT make the change. Raise it with the author.
 
+## Before submission
+
+Lab AI policy requires two things before a paper is submitted. At a journal-format
+conversion, a submission build, or whenever the author mentions submitting, check both and
+report what's missing:
+
+- **AI disclosure statement.** Every paper needs one, even if no AI was used. It says what
+  AI was used for and, ideally, which models and versions. The statement is prose, so do
+  not write or insert it; flag it if it's absent. If the author asks, list what the repo
+  documents (such as `Co-Authored-By` trailers in `git log`) as notes outside the manuscript.
+- **AI review.** Look for a `pre_submission_review_*.md` findings file for the current
+  version, with a decision recorded on every finding. If there isn't one, offer the
+  pre-submission-review skill.
+
 ## Common slips to avoid
 
 Each of these looks harmless and crosses the prose line:
+
+- "Adding the AI disclosure statement since it's required" — prose. Flag it; don't write it.
 
 - "Just fixing a typo in the abstract" — prose. Don't.
 - "Adding a transition sentence to make a chunk output flow" — prose. Don't.

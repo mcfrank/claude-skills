@@ -43,6 +43,7 @@ even for a single paper:
 ```
 
 - Keep `.qmd` paths relative to the paper folder (`osf/...`), so the folder can be moved.
+- **Version control:** run `git init` at the `<topic>_audits/` root before the first script, with `osf/` and `papers/` in `.gitignore`. Keep it local, with no remote unless the user asks (see Privacy below).
 - If the user says a PDF is "in the folder" and it isn't, search for it (`mdfind -name`) and confirm it matches the OSF project title before using it. Don't duplicate PDFs that already live in `papers/`.
 - **Privacy:** these reports critique named colleagues' work. Render locally only. Do **not** publish them as Artifacts, to Quarto Pub, or anywhere else unless the user explicitly asks. Deliver the HTML with `SendUserFile`.
 
@@ -161,7 +162,7 @@ Use the matrix to answer the user's likely question: *is this a real effect that
 ## Stage 9: Write, render, and **verify prose against output**
 
 - Start from `templates/audit_template.qmd`. It includes the two required disclaimer callouts:
-  - `callout-important` "AI-generated — not for publication";
+  - `callout-important` "AI-generated — not for publication" (replace `MODEL` with the model actually used, e.g. Claude Opus 5.5);
   - `callout-warning` "Preliminary & unvetted analysis".
 - Keep the template's section order: Summary (bottom line first) → Materials & provenance → Reproduction → Prereg deviations → Threats/robustness → Pattern across outcomes → Assessment → Session info.
 - Put computed numbers in inline `r` expressions wherever feasible. Static markdown tables only for the paper's own numbers.

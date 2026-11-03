@@ -21,9 +21,26 @@ early visual and **language** development from *naturalistic* input, and as trai
 developmentally-plausible vision and vision-language models. It is the successor/scale-up to SAYCam.
 
 **Human-subjects data — the hard rule.** Frames show children's faces and home interiors. Raw
-frames/video/audio are **restricted** and must **never** reach a public URL, repo, or external
-service. Only aggregate/derived numbers and face-free plots leave the cluster. (In vlm-headcam this
-is enforced by `book/publish-public.sh`, which strips frames and aborts on a safety gate.)
+frames/video/audio/transcripts are **restricted** and must **never** reach a public URL or repo.
+They may go only to local models, or to a commercial service whose terms bar training on or reusing
+the inputs (Vertex AI is the guidelines' named example). Apart from that, only aggregate/derived
+numbers and face-free plots leave the cluster. (In vlm-headcam this is enforced by
+`book/publish-public.sh`, which strips frames and aborts on a safety gate.)
+
+The [data use guidelines](https://babyview-project.github.io/data-use/) govern; read them before
+anything new. Points that come up often:
+
+- **Coding agents count as commercial services, and consumer chatbots are prohibited.** Unless the
+  session's account has qualifying terms, don't Read or display frames, audio, or transcripts in
+  Claude Code. Treat consumer plans (Free, Pro, Max) as not qualifying. Write code that processes
+  them, and inspect only schemas and aggregates.
+- **Check first:** IT and the IRB decide which services are approved for this data.
+- **Presentations and social media:** blur faces in any BabyView example, don't allow those
+  presentations to be recorded and redistributed, and never post examples on social media.
+- **Trained models:** anything trained or fine-tuned on BabyView may be shared only with researchers
+  who have BabyView access on Databrary, through a gated repository. BabyView data may not go into
+  training sets for large-scale commercial or frontier models.
+- **Identifying features:** don't prompt models to reproduce faces or voices.
 
 ### The vlm-headcam sub-project (the work this skill grew out of)
 Learn **word↔object mappings** from BabyView video + ASR transcripts with a frozen-encoder

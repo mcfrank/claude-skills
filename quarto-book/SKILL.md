@@ -123,8 +123,8 @@ standing banner at the **top of every chapter** — don't rely on one note in th
   ```
   ::: {.callout-important}
   ## AI-generated — not for publication
-  The code and prose in this book were written by an AI agent under human direction; not
-  line-by-line verified; must not be published or cited as-is.
+  The code and prose in this book were written by an AI agent (MODEL, e.g. Claude Opus 5.5)
+  under human direction; not line-by-line verified; must not be published or cited as-is.
   :::
   ::: {.callout-warning}
   ## Preliminary & unvetted analysis

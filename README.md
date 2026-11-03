@@ -37,6 +37,8 @@ project.
 
 - **`adversarial-protocol-review`**: "what could manufacture this result?"
   review of experiments, evals, and analyses.
+- **`pre-submission-review`**: required AI review of a lab paper before submission;
+  read-only on the manuscript, with a findings file for the author to decide on.
 - **`reproducibility-audit`**: computational reproducibility audit of a
   published paper (OSF fetch, prereg check, Quarto report template, error
   checklist, robustness toolkit).

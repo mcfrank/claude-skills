@@ -18,7 +18,7 @@ execute:
 
 ::: {.callout-important}
 ## AI-generated — not for publication
-The code and prose in this report were written by an AI agent (Claude) under human direction. They have not been verified line by line, and must not be published, circulated, or cited as-is. All claims about the original authors' analyses should be independently checked before being communicated to anyone.
+The code and prose in this report were written by an AI agent (MODEL) under human direction. They have not been verified line by line, and must not be published, circulated, or cited as-is. All claims about the original authors' analyses should be independently checked before being communicated to anyone.
 :::
 
 ::: {.callout-warning}
