@@ -5,8 +5,8 @@ description: >
   (.qmd) that render to a browsable HTML site and publish to Quarto Pub. Use when creating
   or organizing a Quarto book, wiring the Python/venv kernel, deciding what to commit vs
   gitignore, publishing, or setting chapter style/notation. Covers the freeze-cache traps,
-  data-gating tiers (incl. human-subjects / unpublished data going to a PUBLIC url), and
-  the publish safety gate.
+  data-gating tiers (incl. human-subjects / unpublished data going to a PUBLIC url), the
+  publish safety gate, and building or publishing from a cloud session.
 ---
 
 # Quarto analysis books
@@ -36,7 +36,11 @@ ipykernel). A `kernel 'python3' not found` error means this is unset. `notebooks
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
-export QUARTO_PYTHON="$(cd .. && pwd)/.venv/bin/python"
+if [ -x "../.venv/bin/python" ]; then
+  export QUARTO_PYTHON="$(cd .. && pwd)/.venv/bin/python"
+else
+  export QUARTO_PYTHON="$(command -v python3)"   # cloud containers usually have no venv
+fi
 quarto render "$@"
 ```
 and in `_quarto.yml`: `jupyter: python3`. Render one chapter `./render.sh 07-rsa.qmd`;
@@ -131,6 +135,16 @@ standing banner at the **top of every chapter** — don't rely on one note in th
   Exploratory analyses of preliminary work; numbers not independently validated; check before use.
   :::
   ```
+- **Name the model and its version in the banner** (e.g. "Claude Opus 5.5"), not just "an AI
+  agent" or "Claude Code". Readers need to know which model produced the text.
+  - Don't guess it from memory or from a product name. In a cloud session, read it from the
+    session's own metadata (the `get_session` tool: report the model the session is set to and
+    the one that last served a turn). Locally, use the model shown by `/status` or `/model`.
+  - If more than one model or session contributed, list each. When a later session makes
+    substantial edits, add its model to the banner in the same commit.
+  - If a session is not permitted to write model identifiers into committed files, leave an
+    obvious placeholder (`MODEL AND VERSION: fill in`), and tell the user so they can fill it
+    in. Never drop the field silently.
 - Pull it into each chapter with a shortcode on the line **after** the `# Title {#sec-…}`:
   `{{< include _caution.qmd >}}`. Use the *shortcode* form — `include-before-body` inserts raw
   HTML and will **not** render markdown callouts.
@@ -138,6 +152,63 @@ standing banner at the **top of every chapter** — don't rely on one note in th
   `callout-caution`/`callout-note` are softer. Give each a `## Title`.
 - Adding it to N chapters is a one-line script that inserts the include after the first `^# ` line
   (skip files that already have it, so it's idempotent on re-runs).
+
+## Cloud sessions (Claude Code on the web)
+
+A cloud container starts empty and is thrown away, and it has no browser. Everything above
+still applies; these are the differences.
+
+**Setup**
+- Quarto is not preinstalled. Install the Linux tarball from the `quarto-dev/quarto-cli`
+  GitHub releases (unpack to `/opt/quarto`, symlink `bin/quarto` onto the PATH), and
+  `pip install jupyter` plus the project's requirements. There is usually no `.venv`, which is
+  why `render.sh` above falls back to the system Python. Put the install in the environment's
+  setup script if the book will be worked on again.
+- Commit a `requirements.txt` so the next session can rebuild the kernel.
+
+**Nothing survives unless it is pushed**
+- Commit `_freeze/`, `_publish.yml` and any `results.json` the chapters read, and push, before
+  the session ends. An unpushed render is lost.
+- Data pulled during the session (API tokens in the environment, downloaded tables) will not be
+  there next time. Chapters that read gitignored data cannot be re-rendered from a fresh
+  clone. Use the pattern from the data-gating section: a committed script writes a small
+  aggregate JSON, the JSON is committed, and the chapter renders from it alone.
+
+**Publishing**
+- There is no browser login. Ask for the Quarto Pub token through the session's secure
+  credential request for the host `quartopub.com` (bearer token). Never ask the user to paste
+  it into chat. The proxy then adds the token to requests, and no environment variable holds
+  it, so give the CLI a placeholder so it will run:
+  `QUARTO_PUB_AUTH_TOKEN=proxy-injected quarto publish quarto-pub --no-render --no-prompt`.
+  Check it works first: `curl https://quartopub.com/api/v1/account` should return 200.
+- **A first publish cannot be done with `--no-prompt`:** it needs `_publish.yml`, and creating a
+  site is an interactive step. Either have the user do the first publish locally and commit
+  `_publish.yml`, or create the site with one call and write the file yourself:
+  ```bash
+  curl -sS -X POST https://quartopub.com/api/v1/sites -H "Accept: application/json" \
+    --data-urlencode "type=site" --data-urlencode "title=BOOK TITLE" --data-urlencode "slug=short-name"
+  # -> {"id": "...", "url": "..."}; check the slug is free first: HEAD /api/v1/slugs/short-name is 404
+  ```
+  ```yaml
+  # _publish.yml
+  - source: project
+    quarto-pub:
+      - id: <id from the response>
+        url: 'https://<username>.quarto.pub/short-name/'
+  ```
+  Creating a site makes a public address. Do it only when the user has asked to publish.
+- **The CLI's own requests may fail behind the proxy** ("connection closed before message
+  completed", "Broken pipe"), typically on image uploads and status checks, and retrying does
+  not help. `publish_curl.py` in this skill's folder makes the same API calls with curl. Copy
+  it next to `_quarto.yml` and run `python3 publish_curl.py` after rendering. It uploads only
+  the files the server is missing.
+- **A new site returns 404 for a minute or two** after the deploy reports ready. Poll the
+  public address; do not publish again.
+- **Verify on the public address,** not just from the exit code: fetch the index, one chapter,
+  one figure PNG and one stylesheet linked from the page.
+- Afterwards, a local session can publish in the normal way; `_publish.yml` keeps the address.
+- The publish safety gate applies as it does locally. A request to publish the book is not
+  clearance for a chapter added later that draws on sensitive or unpublished data.
 
 ## Gotchas grab-bag
 - `kernel not found` → `QUARTO_PYTHON` unset (the wrapper).
