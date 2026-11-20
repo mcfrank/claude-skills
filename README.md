@@ -59,6 +59,9 @@ project.
 - **`cdi-vocabulary-data`**: CDI measurement, Wordbank access, IRT, vocabulary growth.
 - **`babyview-dataset`**: the BabyView head-camera corpus, its pipeline,
   releases, and storage tiers.
+- **`peekbank-report`**: starting or resuming a Quarto/R analysis report over
+  Peekbank eye-tracking data (cloud setup, scaffold, schema traps, standard
+  accuracy pipeline, cross-dataset brms models, unpublished-data handling).
 
 ## Local-only skills
 

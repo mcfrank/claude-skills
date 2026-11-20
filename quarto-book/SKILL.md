@@ -44,6 +44,17 @@ whole book `./render.sh`. **`render.sh` reliably renders ONE file per call** —
 need several; a multi-file arg list can silently skip files (render each, verify each
 "Output created").
 
+### R / knitr books
+Chapters with only `{r}` chunks run under knitr. Drop `jupyter:` from `_quarto.yml`, and there's no
+venv to point at. Two things still bite:
+- **`here()` stops at `notebooks/`**, because recent `here` treats `_quarto.yml` as a project
+  root. Put `here::i_am("notebooks/<chapter>.qmd")` in every chapter's setup chunk.
+- **Locale:** cloud containers default to POSIX, so non-ASCII characters (en dashes, ×) in figures
+  print as `<U+2013>`. Add `export LANG="${LANG:-C.UTF-8}"` to `render.sh`.
+
+knitr writes a `<chapter>.rmarkdown` intermediate next to the source during a render, so
+gitignore `notebooks/*.rmarkdown`. For an R example end to end, see the `peekbank-report` skill.
+
 ## Freeze — the #1 trap
 `_quarto.yml` sets `execute: { freeze: auto }` so unchanged chapters skip re-execution
 (fast; also lets you render without every chapter's heavy deps installed). But:
