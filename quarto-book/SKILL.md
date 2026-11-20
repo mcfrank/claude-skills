@@ -56,6 +56,10 @@ need several; a multi-file arg list can silently skip files (render each, verify
   **stale** cached output. Fix: `rm -rf notebooks/_freeze/<chapter>` then render to force
   re-execution.
 - Editing prose re-triggers that chapter (source changed) — usually fine.
+- **Freeze does not notice a change in an `{{< include >}}`d file either.** Edit a shared
+  partial (e.g. the caution banner) and only chapters without cached cells pick it up. After
+  changing a partial, `rm -rf notebooks/_freeze` and render every chapter, then grep the
+  rendered HTML for the new text in each one.
 - **Commit `_freeze/`** so collaborators and the publish step reuse the cache (it stores
   computed outputs incl. figure PNGs).
 
